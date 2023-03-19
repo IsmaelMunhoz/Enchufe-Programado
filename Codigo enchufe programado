@@ -1,0 +1,109 @@
+// Librerías necesarias
+#include <Wire.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
+
+// Definición de pines
+#define OLED_ADDR   0x3C
+#define OLED_SDA    A4
+#define OLED_SCL    A5
+#define RELAY_PIN   8
+#define SW1_PIN     7
+#define SW2_PIN     6
+#define SW3_PIN     5
+#define SW4_PIN     4
+#define SW5_PIN     3
+
+// Definición de constantes
+#define NUM_MODES   4
+#define MODE1_NAME  "Temporizador"
+#define MODE2_NAME  "Semanal"
+#define MODE3_NAME  "On/Off"
+#define MODE4_NAME  "Configuracion"
+
+// Declaración de objetos
+Adafruit_SSD1306 display(128, 64, &Wire, OLED_ADDR);
+bool relayState = LOW;
+int currentMode = 1;
+
+// Funciones auxiliares
+void printModeName(int mode) {
+  switch (mode) {
+    case 1:
+      display.println(MODE1_NAME);
+      break;
+    case 2:
+      display.println(MODE2_NAME);
+      break;
+    case 3:
+      display.println(MODE3_NAME);
+      break;
+    case 4:
+      display.println(MODE4_NAME);
+      break;
+  }
+}
+
+// Configuración inicial
+void setup() {
+  // Inicialización de objetos
+  Wire.begin(OLED_SDA, OLED_SCL);
+  display.begin(SSD1306_SWITCHCAPVCC);
+
+  // Mensaje de bienvenida
+  display.clearDisplay();
+  display.setTextSize(1);
+  display.setTextColor(WHITE);
+  display.setCursor(0,0);
+  display.println("Hola!");
+  display.display();
+  delay(2000);
+
+  // Selección del modo de trabajo
+  display.clearDisplay();
+  display.setTextSize(1);
+  display.setTextColor(WHITE);
+  display.setCursor(0,0);
+  display.println("Modo 1: ");
+  printModeName(currentMode);
+  display.display();
+}
+
+// Loop principal
+void loop() {
+  // Cambio de modo de trabajo
+  if (digitalRead(SW1_PIN) == LOW) {
+    currentMode++;
+    if (currentMode > NUM_MODES) {
+      currentMode = 1;
+    }
+    display.clearDisplay();
+    display.setTextSize(1);
+    display.setTextColor(WHITE);
+    display.setCursor(0,0);
+    display.print("Modo ");
+    display.print(currentMode);
+    display.print(": ");
+    printModeName(currentMode);
+    display.display();
+    delay(100);
+  }
+
+  // Selección del modo de trabajo
+  if (digitalRead(SW5_PIN) == LOW) {
+    switch (currentMode) {
+      case 1:
+        // Funcionalidad del modo 1: Temporizador
+        break;
+      case 2:
+        // Funcionalidad del modo 2: Semanal
+        break;
+      case 3:
+        // Funcionalidad del modo 3: On/Off
+        break;
+      case 4:
+        // Funcionalidad del modo 4: Configuración
+        break;
+    }
+  }
+}
